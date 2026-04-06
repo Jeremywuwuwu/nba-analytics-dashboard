@@ -61,7 +61,8 @@
 - [x] Hot module replacement working
 
 ## Pending / Future
-- [ ] Player comparison mode (side-by-side radar charts)
+- [x] Player comparison mode — multi-select on Players page with compare bar
+- [x] Player comparison page — overlaid radar charts + season trend lines
 - [ ] Team detail pages (/teams/:id)
 - [ ] Game detail / box score view
 - [ ] Historical season selector

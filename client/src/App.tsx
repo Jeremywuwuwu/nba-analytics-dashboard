@@ -5,7 +5,7 @@
  */
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import DashboardLayout from "./components/DashboardLayout";
@@ -16,14 +16,55 @@ import PlayerDetail from "./pages/PlayerDetail";
 import NotFound from "./pages/NotFound";
 import Trends from "./pages/Trends";
 import LiveScores from "./pages/LiveScores";
+import PlayerComparison from "./pages/PlayerComparison";
+import { useState, useCallback } from "react";
+
+const MAX_COMPARE = 4;
+
 function Router() {
-  // make sure to consider if you need authentication for certain routes
+  const [compareIds, setCompareIds] = useState<number[]>([]);
+  const [, navigate] = useLocation();
+
+  const toggleCompare = useCallback((id: number) => {
+    setCompareIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= MAX_COMPARE) return prev; // cap at 4
+      return [...prev, id];
+    });
+  }, []);
+
+  const removeCompare = useCallback((id: number) => {
+    setCompareIds((prev) => prev.filter((x) => x !== id));
+  }, []);
+
+  const clearCompare = useCallback(() => {
+    setCompareIds([]);
+    navigate("/players");
+  }, [navigate]);
+
   return (
-    <DashboardLayout>
+    <DashboardLayout compareCount={compareIds.length} onViewCompare={() => navigate("/compare")}>
       <Switch>
         <Route path="/" component={Dashboard} />
-        <Route path="/players" component={Players} />
+        <Route path="/players">
+          {() => (
+            <Players
+              compareIds={compareIds}
+              onToggleCompare={toggleCompare}
+              onViewCompare={() => navigate("/compare")}
+            />
+          )}
+        </Route>
         <Route path="/players/:id" component={PlayerDetail} />
+        <Route path="/compare">
+          {() => (
+            <PlayerComparison
+              selectedIds={compareIds}
+              onRemove={removeCompare}
+              onClear={clearCompare}
+            />
+          )}
+        </Route>
         <Route path="/standings" component={Standings} />
         <Route path="/trends" component={Trends} />
         <Route path="/live" component={LiveScores} />

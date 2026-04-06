@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Zap,
+  GitCompare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,9 +27,15 @@ const NAV_ITEMS = [
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+  compareCount?: number;
+  onViewCompare?: () => void;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({
+  children,
+  compareCount = 0,
+  onViewCompare,
+}: DashboardLayoutProps) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -36,6 +43,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     if (exact) return location === href;
     return location.startsWith(href);
   };
+
+  // Derive page title — include Compare page
+  const pageTitle = location === "/compare"
+    ? "Player Comparison"
+    : NAV_ITEMS.find(n => isActive(n.href, n.exact))?.label ?? "Dashboard";
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -86,6 +98,38 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </Link>
           );
         })}
+
+        {/* Compare shortcut — only visible when players are selected */}
+        {compareCount > 0 && (
+          <>
+            <div className="text-[10px] uppercase tracking-widest text-white/25 px-3 mt-4 mb-2 font-semibold">
+              Tools
+            </div>
+            <button
+              onClick={() => { onViewCompare?.(); setMobileOpen(false); }}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group",
+                location === "/compare"
+                  ? "bg-amber-500/15 text-amber-300 border-l-2 border-amber-400 pl-[10px]"
+                  : "text-white/50 hover:text-white/80 hover:bg-white/[0.05] border-l-2 border-transparent"
+              )}
+            >
+              <GitCompare
+                className={cn(
+                  "w-4 h-4 flex-shrink-0 transition-colors",
+                  location === "/compare" ? "text-amber-400" : "text-white/35 group-hover:text-white/60"
+                )}
+              />
+              Compare
+              <span
+                className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                style={{ background: "rgba(245,158,11,0.2)", color: "#FCD34D" }}
+              >
+                {compareCount}
+              </span>
+            </button>
+          </>
+        )}
       </nav>
 
       {/* Season badge */}
@@ -152,12 +196,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 className="text-white font-bold text-lg leading-none"
                 style={{ fontFamily: "'Syne', sans-serif" }}
               >
-                {NAV_ITEMS.find(n => isActive(n.href, n.exact))?.label ?? "Dashboard"}
+                {pageTitle}
               </h1>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Compare CTA — shown in header when players are queued */}
+            {compareCount > 0 && location !== "/compare" && (
+              <button
+                onClick={onViewCompare}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+                style={{
+                  background: "rgba(245,158,11,0.12)",
+                  border: "1px solid rgba(245,158,11,0.3)",
+                  color: "#FCD34D",
+                }}
+              >
+                <GitCompare className="w-3.5 h-3.5" />
+                Compare {compareCount} player{compareCount > 1 ? "s" : ""}
+              </button>
+            )}
             {/* Live indicator */}
             <div className="flex items-center gap-2 text-xs text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-indicator" />

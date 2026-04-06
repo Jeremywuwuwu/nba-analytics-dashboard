@@ -343,6 +343,113 @@ export const TEAM_STATS_COMPARISON = [
   { category: "REB", OKC: 43.8, BOS: 44.2, CLE: 42.7, DEN: 46.1, LAL: 43.4 },
 ];
 
+// Per-player monthly season trends for comparison mode
+export const PLAYER_SEASON_TRENDS: Record<number, SeasonTrend[]> = {
+  // SGA
+  1: [
+    { month: "Oct", ppg: 28.4, rpg: 5.1, apg: 5.8, fgPct: 49.2 },
+    { month: "Nov", ppg: 30.1, rpg: 5.3, apg: 6.1, fgPct: 51.4 },
+    { month: "Dec", ppg: 31.8, rpg: 5.4, apg: 6.3, fgPct: 52.7 },
+    { month: "Jan", ppg: 33.2, rpg: 5.6, apg: 6.5, fgPct: 53.1 },
+    { month: "Feb", ppg: 34.1, rpg: 5.7, apg: 6.8, fgPct: 52.4 },
+    { month: "Mar", ppg: 33.8, rpg: 5.5, apg: 6.4, fgPct: 51.9 },
+    { month: "Apr", ppg: 34.6, rpg: 5.8, apg: 6.6, fgPct: 53.2 },
+  ],
+  // Jokic
+  2: [
+    { month: "Oct", ppg: 25.2, rpg: 11.8, apg: 9.1, fgPct: 54.1 },
+    { month: "Nov", ppg: 27.4, rpg: 12.4, apg: 9.8, fgPct: 56.2 },
+    { month: "Dec", ppg: 28.9, rpg: 12.9, apg: 10.1, fgPct: 57.4 },
+    { month: "Jan", ppg: 30.1, rpg: 13.2, apg: 10.5, fgPct: 58.1 },
+    { month: "Feb", ppg: 31.4, rpg: 13.5, apg: 10.8, fgPct: 57.8 },
+    { month: "Mar", ppg: 30.8, rpg: 13.1, apg: 10.3, fgPct: 57.3 },
+    { month: "Apr", ppg: 31.2, rpg: 13.4, apg: 10.6, fgPct: 58.4 },
+  ],
+  // Giannis
+  3: [
+    { month: "Oct", ppg: 26.8, rpg: 10.9, apg: 5.8, fgPct: 58.2 },
+    { month: "Nov", ppg: 28.4, rpg: 11.4, apg: 6.2, fgPct: 59.7 },
+    { month: "Dec", ppg: 29.7, rpg: 11.7, apg: 6.4, fgPct: 60.8 },
+    { month: "Jan", ppg: 31.2, rpg: 12.1, apg: 6.7, fgPct: 61.4 },
+    { month: "Feb", ppg: 32.1, rpg: 12.3, apg: 6.9, fgPct: 61.2 },
+    { month: "Mar", ppg: 30.9, rpg: 11.9, apg: 6.5, fgPct: 61.0 },
+    { month: "Apr", ppg: 31.8, rpg: 12.2, apg: 6.8, fgPct: 61.5 },
+  ],
+  // Luka
+  4: [
+    { month: "Oct", ppg: 24.1, rpg: 7.8, apg: 7.2, fgPct: 44.8 },
+    { month: "Nov", ppg: 26.3, rpg: 8.2, apg: 7.8, fgPct: 46.1 },
+    { month: "Dec", ppg: 28.1, rpg: 8.5, apg: 8.1, fgPct: 47.4 },
+    { month: "Jan", ppg: 29.4, rpg: 8.7, apg: 8.3, fgPct: 47.8 },
+    { month: "Feb", ppg: 30.2, rpg: 8.9, apg: 8.5, fgPct: 47.2 },
+    { month: "Mar", ppg: 28.7, rpg: 8.6, apg: 8.0, fgPct: 47.2 },
+    { month: "Apr", ppg: 29.1, rpg: 8.8, apg: 8.2, fgPct: 47.6 },
+  ],
+  // Tatum
+  5: [
+    { month: "Oct", ppg: 23.1, rpg: 7.4, apg: 4.2, fgPct: 44.1 },
+    { month: "Nov", ppg: 24.8, rpg: 7.8, apg: 4.6, fgPct: 45.7 },
+    { month: "Dec", ppg: 26.2, rpg: 8.0, apg: 4.8, fgPct: 46.4 },
+    { month: "Jan", ppg: 27.4, rpg: 8.2, apg: 5.1, fgPct: 47.1 },
+    { month: "Feb", ppg: 28.1, rpg: 8.4, apg: 5.3, fgPct: 46.8 },
+    { month: "Mar", ppg: 26.9, rpg: 8.1, apg: 4.9, fgPct: 46.8 },
+    { month: "Apr", ppg: 27.3, rpg: 8.3, apg: 5.0, fgPct: 47.2 },
+  ],
+  // Ant Edwards
+  6: [
+    { month: "Oct", ppg: 22.4, rpg: 4.8, apg: 4.4, fgPct: 44.2 },
+    { month: "Nov", ppg: 24.1, rpg: 5.1, apg: 4.8, fgPct: 45.4 },
+    { month: "Dec", ppg: 25.8, rpg: 5.3, apg: 5.0, fgPct: 46.1 },
+    { month: "Jan", ppg: 27.2, rpg: 5.5, apg: 5.2, fgPct: 46.7 },
+    { month: "Feb", ppg: 27.9, rpg: 5.6, apg: 5.4, fgPct: 46.3 },
+    { month: "Mar", ppg: 26.4, rpg: 5.4, apg: 5.1, fgPct: 46.3 },
+    { month: "Apr", ppg: 27.1, rpg: 5.5, apg: 5.2, fgPct: 46.8 },
+  ],
+  // LeBron
+  7: [
+    { month: "Oct", ppg: 21.2, rpg: 7.1, apg: 7.6, fgPct: 50.1 },
+    { month: "Nov", ppg: 22.8, rpg: 7.4, apg: 7.9, fgPct: 51.4 },
+    { month: "Dec", ppg: 23.9, rpg: 7.7, apg: 8.1, fgPct: 52.1 },
+    { month: "Jan", ppg: 24.8, rpg: 7.9, apg: 8.3, fgPct: 52.6 },
+    { month: "Feb", ppg: 25.4, rpg: 8.1, apg: 8.5, fgPct: 52.4 },
+    { month: "Mar", ppg: 24.3, rpg: 7.8, apg: 8.2, fgPct: 52.4 },
+    { month: "Apr", ppg: 24.8, rpg: 8.0, apg: 8.4, fgPct: 52.7 },
+  ],
+  // Curry
+  8: [
+    { month: "Oct", ppg: 21.4, rpg: 4.2, apg: 4.8, fgPct: 44.1 },
+    { month: "Nov", ppg: 22.9, rpg: 4.4, apg: 5.0, fgPct: 45.2 },
+    { month: "Dec", ppg: 24.1, rpg: 4.5, apg: 5.1, fgPct: 45.8 },
+    { month: "Jan", ppg: 25.2, rpg: 4.7, apg: 5.3, fgPct: 46.4 },
+    { month: "Feb", ppg: 25.8, rpg: 4.8, apg: 5.4, fgPct: 46.2 },
+    { month: "Mar", ppg: 24.6, rpg: 4.6, apg: 5.2, fgPct: 46.2 },
+    { month: "Apr", ppg: 25.1, rpg: 4.7, apg: 5.3, fgPct: 46.6 },
+  ],
+  // KD
+  9: [
+    { month: "Oct", ppg: 23.4, rpg: 6.1, apg: 3.8, fgPct: 50.4 },
+    { month: "Nov", ppg: 25.1, rpg: 6.4, apg: 4.0, fgPct: 51.8 },
+    { month: "Dec", ppg: 26.4, rpg: 6.7, apg: 4.1, fgPct: 52.4 },
+    { month: "Jan", ppg: 27.8, rpg: 6.9, apg: 4.3, fgPct: 52.9 },
+    { month: "Feb", ppg: 28.4, rpg: 7.0, apg: 4.4, fgPct: 52.8 },
+    { month: "Mar", ppg: 27.1, rpg: 6.8, apg: 4.2, fgPct: 52.8 },
+    { month: "Apr", ppg: 27.6, rpg: 6.9, apg: 4.3, fgPct: 53.1 },
+  ],
+  // Mitchell
+  10: [
+    { month: "Oct", ppg: 22.4, rpg: 4.6, apg: 5.2, fgPct: 45.8 },
+    { month: "Nov", ppg: 24.1, rpg: 4.9, apg: 5.5, fgPct: 46.9 },
+    { month: "Dec", ppg: 25.4, rpg: 5.1, apg: 5.7, fgPct: 47.6 },
+    { month: "Jan", ppg: 26.8, rpg: 5.2, apg: 5.9, fgPct: 48.1 },
+    { month: "Feb", ppg: 27.4, rpg: 5.3, apg: 6.0, fgPct: 47.9 },
+    { month: "Mar", ppg: 26.1, rpg: 5.1, apg: 5.8, fgPct: 47.9 },
+    { month: "Apr", ppg: 26.6, rpg: 5.2, apg: 5.9, fgPct: 48.2 },
+  ],
+};
+
+// Distinct colors for comparison mode (up to 4 players)
+export const COMPARISON_COLORS = ["#3B82F6", "#F59E0B", "#10B981", "#EF4444"];
+
 export const POSITION_COLORS: Record<string, string> = {
   PG: "#3B82F6",
   SG: "#8B5CF6",
