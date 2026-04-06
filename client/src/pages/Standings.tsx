@@ -3,8 +3,9 @@
  * Design: "Fast Break" — tabbed East/West, playoff seeding visualization
  */
 import { useState } from "react";
-import { Trophy, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { EAST_STANDINGS, WEST_STANDINGS, TEAM_STATS_COMPARISON, type Team } from "@/lib/nbaData";
+import { Trophy, TrendingUp, TrendingDown, Minus, Wifi, WifiOff } from "lucide-react";
+import { TEAM_STATS_COMPARISON, type Team } from "@/lib/nbaData";
+import { useStandings } from "@/hooks/useNba";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
@@ -212,16 +213,30 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function Standings() {
   const [tab, setTab] = useState<"East" | "West" | "Both">("East");
+  const { east, west, isLive, isLoading } = useStandings();
 
   return (
     <div className="p-4 lg:p-6 space-y-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-white font-bold text-xl" style={{ fontFamily: "'Syne', sans-serif" }}>
-            League Standings
-          </h2>
-          <p className="text-white/40 text-sm mt-0.5">2024–25 Regular Season · Through Apr 5, 2025</p>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-white font-bold text-xl" style={{ fontFamily: "'Syne', sans-serif" }}>
+              League Standings
+            </h2>
+            {isLive ? (
+              <div className="flex items-center gap-1 text-emerald-400 text-xs font-semibold">
+                <Wifi className="w-3.5 h-3.5" />
+                <span>Live</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 text-white/30 text-xs">
+                <WifiOff className="w-3.5 h-3.5" />
+                <span>Cached</span>
+              </div>
+            )}
+          </div>
+          <p className="text-white/40 text-sm mt-0.5">2024–25 Regular Season{isLive ? " · Live from ESPN" : " · Curated data"}</p>
         </div>
         <div className="flex rounded-lg overflow-hidden border border-white/[0.08]">
           {(["East", "West", "Both"] as const).map(t => (
@@ -241,12 +256,21 @@ export default function Standings() {
         </div>
       </div>
 
-      {/* Tables */}
-      {(tab === "East" || tab === "Both") && (
-        <StandingsTable teams={EAST_STANDINGS} title="Eastern Conference" />
+      {/* Loading skeletons */}
+      {isLoading && (
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-12 rounded-xl bg-white/[0.04] animate-pulse" />
+          ))}
+        </div>
       )}
-      {(tab === "West" || tab === "Both") && (
-        <StandingsTable teams={WEST_STANDINGS} title="Western Conference" />
+
+      {/* Tables */}
+      {!isLoading && (tab === "East" || tab === "Both") && (
+        <StandingsTable teams={east} title="Eastern Conference" />
+      )}
+      {!isLoading && (tab === "West" || tab === "Both") && (
+        <StandingsTable teams={west} title="Western Conference" />
       )}
 
       {/* Win % Comparison Chart */}
@@ -259,10 +283,10 @@ export default function Standings() {
         </h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart
-            data={[...EAST_STANDINGS, ...WEST_STANDINGS]
+            data={[...east, ...west]
               .sort((a, b) => b.pct - a.pct)
               .slice(0, 8)
-              .map(t => ({ team: t.abbr, pct: (t.pct * 100).toFixed(1), conf: t.conference, color: t.color }))}
+              .map(t => ({ team: t.abbr, pct: parseFloat((t.pct * 100).toFixed(1)), conf: t.conference, color: t.color }))}
             margin={{ top: 5, right: 5, left: -20, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -270,7 +294,7 @@ export default function Standings() {
             <YAxis domain={[40, 85]} tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 11 }} axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="pct" name="Win %" radius={[4, 4, 0, 0]} maxBarSize={32}>
-              {[...EAST_STANDINGS, ...WEST_STANDINGS]
+              {[...east, ...west]
                 .sort((a, b) => b.pct - a.pct)
                 .slice(0, 8)
                 .map((t, i) => (

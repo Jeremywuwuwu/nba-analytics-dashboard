@@ -9,11 +9,12 @@ import {
   PolarAngleAxis, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   Legend
 } from "recharts";
-import { TrendingUp, TrendingDown, Users, Trophy, Activity, ArrowRight, Star } from "lucide-react";
+import { TrendingUp, TrendingDown, Users, Trophy, Activity, ArrowRight, Star, Wifi } from "lucide-react";
 import {
   TOP_PLAYERS, TEAM_STANDINGS, SEASON_TRENDS, TEAM_STATS_COMPARISON,
   SCORING_LEADERS, EAST_STANDINGS, WEST_STANDINGS
 } from "@/lib/nbaData";
+import { useTodaysGames } from "@/hooks/useNba";
 import { cn } from "@/lib/utils";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663496153499/PM4KysXAdyzTa5mHGNSYJf/nba-hero-bg-FmbkuVw6g9dHefDLKtWwQA.webp";
@@ -97,6 +98,48 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
+function TodaysGamesWidget() {
+  const { games, isLoading } = useTodaysGames();
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-xs text-white/30 animate-pulse">
+        <Wifi className="w-3.5 h-3.5" />
+        <span>Loading today's games...</span>
+      </div>
+    );
+  }
+  if (!games.length) return null;
+  const live = games.filter(g => g.status === "LIVE");
+  const final = games.filter(g => g.status === "FINAL");
+  const upcoming = games.filter(g => g.status === "UPCOMING");
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {live.length > 0 && (
+        <Link href="/live">
+          <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold bg-emerald-400/10 border border-emerald-400/20 rounded-full px-3 py-1 hover:bg-emerald-400/15 transition-colors cursor-pointer">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ animation: "pulse 1.5s ease-in-out infinite" }} />
+            {live.length} Live Game{live.length > 1 ? "s" : ""}
+          </span>
+        </Link>
+      )}
+      {final.length > 0 && (
+        <Link href="/live">
+          <span className="text-xs text-white/40 bg-white/[0.05] border border-white/[0.08] rounded-full px-3 py-1 hover:text-white/60 transition-colors cursor-pointer">
+            {final.length} Final
+          </span>
+        </Link>
+      )}
+      {upcoming.length > 0 && (
+        <Link href="/live">
+          <span className="text-xs text-blue-400/60 bg-blue-400/[0.06] border border-blue-400/[0.12] rounded-full px-3 py-1 hover:text-blue-400/80 transition-colors cursor-pointer">
+            {upcoming.length} Upcoming
+          </span>
+        </Link>
+      )}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const leader = TOP_PLAYERS[0]; // SGA
   const topTeam = TEAM_STANDINGS.find(t => t.abbr === "OKC")!;
@@ -123,6 +166,9 @@ export default function Dashboard() {
           <p className="text-white/50 text-sm mt-1">
             Real-time stats · Advanced metrics · Full standings
           </p>
+          <div className="mt-3">
+            <TodaysGamesWidget />
+          </div>
         </div>
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-3 py-1.5 text-xs text-emerald-300 font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-indicator" />

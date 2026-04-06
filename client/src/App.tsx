@@ -16,8 +16,8 @@ import PlayerDetail from "./pages/PlayerDetail";
 import NotFound from "./pages/NotFound";
 import Trends from "./pages/Trends";
 import LiveScores from "./pages/LiveScores";
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <DashboardLayout>
       <Switch>

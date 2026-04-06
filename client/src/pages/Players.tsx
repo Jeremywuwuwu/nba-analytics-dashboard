@@ -1,20 +1,23 @@
 /**
  * Players — Full player stats table with sorting and filtering
  * Design: "Fast Break" — data-dense table with hover cards
+ * Data: Curated 2024-25 season stats (ESPN free API doesn't expose per-player averages)
  */
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
-import { Search, ChevronUp, ChevronDown, ChevronsUpDown, Filter, ArrowRight } from "lucide-react";
+import {
+  Search, ChevronUp, ChevronDown, ChevronsUpDown, Filter, ArrowRight
+} from "lucide-react";
 import { TOP_PLAYERS, POSITION_COLORS, type Player } from "@/lib/nbaData";
 import { cn } from "@/lib/utils";
 
 type SortKey = keyof Player;
 type SortDir = "asc" | "desc";
 
-const STAT_COLUMNS: { key: SortKey; label: string; width?: string }[] = [
+const STAT_COLUMNS: { key: SortKey; label: string }[] = [
   { key: "gp", label: "GP" },
   { key: "mpg", label: "MPG" },
-  { key: "ppg", label: "PPG", width: "font-bold text-blue-300" },
+  { key: "ppg", label: "PPG" },
   { key: "rpg", label: "RPG" },
   { key: "apg", label: "APG" },
   { key: "spg", label: "SPG" },
@@ -77,7 +80,9 @@ export default function Players() {
           <h2 className="text-white font-bold text-xl" style={{ fontFamily: "'Syne', sans-serif" }}>
             Player Statistics
           </h2>
-          <p className="text-white/40 text-sm mt-0.5">2024–25 Regular Season · {TOP_PLAYERS.length} players</p>
+          <p className="text-white/40 text-sm mt-0.5">
+            2024–25 Regular Season · {TOP_PLAYERS.length} players
+          </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-white/40">
           <Filter className="w-3.5 h-3.5" />
@@ -125,7 +130,11 @@ export default function Players() {
           className="bg-white/[0.05] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/70 outline-none focus:border-blue-500/50 transition-colors"
           style={{ background: "rgba(255,255,255,0.05)" }}
         >
-          {TEAMS.map(t => <option key={t} value={t} style={{ background: "#0E1628" }}>{t === "All" ? "All Teams" : t}</option>)}
+          {TEAMS.map(t => (
+            <option key={t} value={t} style={{ background: "#0E1628" }}>
+              {t === "All" ? "All Teams" : t}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -138,8 +147,10 @@ export default function Players() {
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                <th className="text-left px-4 py-3 text-[10px] uppercase tracking-widest text-white/30 font-semibold sticky left-0 z-10 min-w-[200px]"
-                  style={{ background: "#0E1628" }}>
+                <th
+                  className="text-left px-4 py-3 text-[10px] uppercase tracking-widest text-white/30 font-semibold sticky left-0 z-10 min-w-[200px]"
+                  style={{ background: "#0E1628" }}
+                >
                   Player
                 </th>
                 <th className="text-center px-3 py-3 text-[10px] uppercase tracking-widest text-white/30 font-semibold">
@@ -167,7 +178,7 @@ export default function Players() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((player, i) => (
+              {filtered.map((player) => (
                 <tr
                   key={player.id}
                   className="transition-colors hover:bg-white/[0.03] group"
@@ -228,7 +239,8 @@ export default function Players() {
                                 : "rgba(255,255,255,0.65)"
                           }}
                         >
-                          {isPlusMinus && val > 0 ? "+" : ""}{val.toFixed(col.key === "gp" || col.key === "age" ? 0 : 1)}
+                          {isPlusMinus && val > 0 ? "+" : ""}
+                          {val.toFixed(col.key === "gp" ? 0 : 1)}
                         </span>
                       </td>
                     );
