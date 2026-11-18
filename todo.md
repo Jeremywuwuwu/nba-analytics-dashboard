@@ -70,10 +70,8 @@
 
 ## Delivery
 - [x] Run build and test verification after team pages
-- [ ] Save a final WebDev checkpoint
-- [ ] Push final dashboard to the existing GitHub repo `nba-analytics-dashboard`
+- [x] Save a final WebDev checkpoint
+- [x] Push final dashboard to the existing GitHub repo `nba-analytics-dashboard`
 - [x] Document data sources, advanced metric formulas, fallback behavior, and refresh intervals
 
-## Pending / Future
-- [ ] Game detail / box score view
-- [ ] Historical season selector
+The current delivery scope is complete. Game detail / box score views and a historical season selector remain optional future product ideas rather than unfinished items in this release checklist.
