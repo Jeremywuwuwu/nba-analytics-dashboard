@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import Trends from "./pages/Trends";
 import LiveScores from "./pages/LiveScores";
 import PlayerComparison from "./pages/PlayerComparison";
+import TeamDetail from "./pages/TeamDetail";
 import { useState, useCallback } from "react";
 
 const MAX_COMPARE = 4;
@@ -56,6 +57,7 @@ function Router() {
           )}
         </Route>
         <Route path="/players/:id" component={PlayerDetail} />
+        <Route path="/teams/:abbr" component={TeamDetail} />
         <Route path="/compare">
           {() => (
             <PlayerComparison

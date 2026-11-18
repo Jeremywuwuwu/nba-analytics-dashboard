@@ -343,7 +343,9 @@ export default function Players({ compareIds, onToggleCompare, onViewCompare }: 
                           )}>
                             {player.name}
                           </div>
-                          <div className="text-white/35 text-xs">{player.teamAbbr}</div>
+                          <Link href={`/teams/${player.teamAbbr}`}>
+                            <span className="text-white/35 text-xs hover:text-blue-300 transition-colors">{player.teamAbbr}</span>
+                          </Link>
                         </div>
                       </div>
                     </td>

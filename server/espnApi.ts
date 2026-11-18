@@ -233,3 +233,88 @@ export function getStat(
   const s = stats.find((x) => x.name === name);
   return { value: s?.value ?? 0, display: s?.displayValue ?? "—" };
 }
+
+export interface EspnTeamDetail {
+  id: string; abbreviation: string; displayName: string; location: string; name: string;
+  color: string; alternateColor: string; logo: string; recordSummary: string; standingSummary: string;
+}
+export interface EspnRosterPlayer {
+  id: string; fullName: string; position: string; jersey: string; age: number | null;
+  height: string; weight: string; status: string; headshot: string;
+}
+export interface EspnTeamShooting {
+  fgPct: number; twoPct: number; threePct: number; ftPct: number; pointsPerGame: number;
+  reboundsPerGame: number; assistsPerGame: number; offensiveReboundsPerGame: number;
+  twoAttemptedPerGame: number; threeMadePerGame: number; threeAttemptedPerGame: number;
+}
+export interface EspnTeamGame {
+  id: string; date: string; opponent: string; opponentAbbreviation: string; opponentLogo: string;
+  homeAway: "home" | "away"; status: string; detail: string; score?: string;
+}
+export interface EspnTeamDetailResponse {
+  team: EspnTeamDetail; roster: EspnRosterPlayer[]; shooting: EspnTeamShooting; games: EspnTeamGame[];
+}
+
+function teamFromPayload(team: any, fallbackId: string): EspnTeamDetail {
+  return {
+    id: team?.id ?? fallbackId,
+    abbreviation: team?.abbreviation ?? "NBA",
+    displayName: team?.displayName ?? "NBA Team",
+    location: team?.location ?? team?.displayName?.split(" ").slice(0, -1).join(" ") ?? "",
+    name: team?.name ?? team?.shortDisplayName ?? "Team",
+    color: team?.color ? `#${team.color.replace(/^#/, "")}` : "#3B82F6",
+    alternateColor: team?.alternateColor ? `#${team.alternateColor.replace(/^#/, "")}` : "#1E40AF",
+    logo: team?.logo ?? team?.logos?.[0]?.href ?? "",
+    recordSummary: team?.recordSummary ?? team?.seasonSummary ?? "",
+    standingSummary: team?.standingSummary ?? "",
+  };
+}
+
+function statValue(categories: any[], name: string): number {
+  for (const category of categories) {
+    const stat = category.stats?.find((item: any) => item.name === name);
+    if (stat) return Number(stat.value ?? 0);
+  }
+  return 0;
+}
+
+/** Fetch roster, shooting splits, and the next five scheduled games from ESPN. */
+export async function getTeamDetail(teamId: string): Promise<EspnTeamDetailResponse> {
+  const [teamRes, rosterRes, statsRes, scheduleRes] = await Promise.all([
+    espn.get(`${ESPN_SITE}/teams/${teamId}`),
+    espn.get(`${ESPN_SITE}/teams/${teamId}/roster`),
+    espn.get(`${ESPN_SITE}/teams/${teamId}/statistics`),
+    espn.get(`${ESPN_SITE}/teams/${teamId}/schedule`),
+  ]);
+  const team = teamFromPayload(teamRes.data?.team, teamId);
+  const roster = (rosterRes.data?.athletes ?? []).map((player: any) => ({
+    id: player.id, fullName: player.fullName ?? player.displayName ?? "Unknown Player",
+    position: player.position?.abbreviation ?? player.position?.displayName ?? "—",
+    jersey: player.jersey ?? "—", age: player.age ?? null, height: player.displayHeight ?? "—",
+    weight: player.displayWeight ?? "—", status: player.status?.type ?? player.status?.name ?? "Active",
+    headshot: player.headshot?.href ?? "",
+  })) as EspnRosterPlayer[];
+  const categories = statsRes.data?.results?.stats?.categories ?? [];
+  const shooting: EspnTeamShooting = {
+    fgPct: statValue(categories, "fieldGoalPct"), twoPct: statValue(categories, "twoPointFieldGoalPct"),
+    threePct: statValue(categories, "threePointFieldGoalPct"), ftPct: statValue(categories, "freeThrowPct"),
+    pointsPerGame: statValue(categories, "avgPoints"), reboundsPerGame: statValue(categories, "avgRebounds"),
+    assistsPerGame: statValue(categories, "avgAssists"), offensiveReboundsPerGame: statValue(categories, "avgOffensiveRebounds"),
+    twoAttemptedPerGame: statValue(categories, "avgTwoPointFieldGoalsAttempted"),
+    threeMadePerGame: statValue(categories, "avgThreePointFieldGoalsMade"),
+    threeAttemptedPerGame: statValue(categories, "avgThreePointFieldGoalsAttempted"),
+  };
+  const now = Date.now();
+  const games = (scheduleRes.data?.events ?? []).filter((event: any) => new Date(event.date).getTime() >= now).slice(0, 5).map((event: any) => {
+    const competition = event.competitions?.[0] ?? {};
+    const opponent = (competition.competitors ?? []).find((entry: any) => entry.team?.id !== team.id) ?? {};
+    return {
+      id: event.id, date: event.date, opponent: opponent.team?.displayName ?? "Opponent",
+      opponentAbbreviation: opponent.team?.abbreviation ?? "OPP", opponentLogo: opponent.team?.logo ?? "",
+      homeAway: opponent.homeAway === "home" ? "away" : "home",
+      status: event.status?.type?.state ?? "pre", detail: event.status?.type?.shortDetail ?? event.status?.type?.detail ?? "Scheduled",
+      score: opponent.score,
+    } as EspnTeamGame;
+  });
+  return { team, roster, shooting, games };
+}

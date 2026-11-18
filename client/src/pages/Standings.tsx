@@ -10,6 +10,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { Link } from "wouter";
 
 const PLAYOFF_CUTOFF = 6;
 const PLAY_IN_CUTOFF = 8;
@@ -126,9 +127,11 @@ function StandingsTable({ teams, title }: { teams: Team[]; title: string }) {
                         style={{ background: team.color, boxShadow: `0 0 6px ${team.color}60` }}
                       />
                       <div>
-                        <div className={cn("font-semibold text-sm whitespace-nowrap", i === 0 ? "text-white" : "text-white/80")}>
-                          {team.city} {team.name.split(" ").pop()}
-                        </div>
+                        <Link href={`/teams/${team.abbr}`}>
+                          <span className={cn("font-semibold text-sm whitespace-nowrap hover:text-blue-300 transition-colors", i === 0 ? "text-white" : "text-white/80")}>
+                            {team.city} {team.name.split(" ").pop()}
+                          </span>
+                        </Link>
                         <div className="text-white/30 text-xs">{team.division}</div>
                       </div>
                     </div>

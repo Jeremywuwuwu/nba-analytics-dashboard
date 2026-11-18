@@ -13,6 +13,7 @@ import {
   SCORING_LEADERS,
   ASSIST_LEADERS,
   REBOUND_LEADERS,
+  TOP_PLAYERS,
   type Team,
 } from "@/lib/nbaData";
 
@@ -29,6 +30,13 @@ export const TEAM_COLORS: Record<string, string> = {
   OKC: "#007AC1", ORL: "#0077C0", PHI: "#006BB6", PHX: "#1D1160",
   POR: "#E03A3E", SAC: "#5A2D81", SAS: "#C4CED4", TOR: "#CE1141",
   UTA: "#002B5C", WAS: "#002B5C",
+};
+
+export const ESPN_TEAM_IDS: Record<string, string> = {
+  ATL: "1", BOS: "2", BKN: "17", CHA: "30", CHI: "4", CLE: "5", DAL: "6", DEN: "7",
+  DET: "8", GSW: "9", HOU: "10", IND: "11", LAC: "12", LAL: "13", MEM: "29", MIA: "14",
+  MIL: "15", MIN: "16", NOP: "3", NYK: "18", OKC: "25", ORL: "19", PHI: "20", PHX: "21",
+  POR: "22", SAC: "23", SAS: "24", TOR: "28", UTA: "26", WAS: "27",
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -167,6 +175,39 @@ export function useLeaders() {
     reboundLeaders: REBOUND_LEADERS,
     isLive: false,
   };
+}
+
+export interface TeamDetailData {
+  team: { id: string; abbreviation: string; displayName: string; location: string; name: string; color: string; alternateColor: string; logo: string; recordSummary: string; standingSummary: string };
+  roster: { id: string; fullName: string; position: string; jersey: string; age: number | null; height: string; weight: string; status: string; headshot: string }[];
+  shooting: { fgPct: number; twoPct: number; threePct: number; ftPct: number; pointsPerGame: number; reboundsPerGame: number; assistsPerGame: number; offensiveReboundsPerGame: number; twoAttemptedPerGame: number; threeMadePerGame: number; threeAttemptedPerGame: number };
+  games: { id: string; date: string; opponent: string; opponentAbbreviation: string; opponentLogo: string; homeAway: "home" | "away"; status: string; detail: string; score?: string }[];
+}
+
+function fallbackTeamDetail(abbr: string): TeamDetailData {
+  const standing = [...EAST_STANDINGS, ...WEST_STANDINGS].find(team => team.abbr === abbr) ?? EAST_STANDINGS[0];
+  const players = TOP_PLAYERS.filter(player => player.teamAbbr === abbr).map(player => ({
+    id: String(player.id), fullName: player.name, position: player.position, jersey: player.number,
+    age: player.age, height: "—", weight: "—", status: "Active", headshot: player.imageUrl ?? "",
+  }));
+  return {
+    team: { id: String(standing.id), abbreviation: standing.abbr, displayName: standing.name, location: standing.city,
+      name: standing.name.split(" ").pop() ?? standing.name, color: standing.color, alternateColor: standing.secondaryColor,
+      logo: "", recordSummary: `${standing.wins}-${standing.losses}`, standingSummary: `${standing.conference} · ${standing.division}` },
+    roster: players,
+    shooting: { fgPct: 48.2, twoPct: 52.6, threePct: 37.8, ftPct: 78.4, pointsPerGame: standing.ppg, reboundsPerGame: 43.8, twoAttemptedPerGame: 58.5,
+      assistsPerGame: 26.4, offensiveReboundsPerGame: 10.8, threeMadePerGame: 13.2, threeAttemptedPerGame: 35.0 },
+    games: Array.from({ length: 5 }, (_, i) => ({ id: `fallback-${abbr}-${i}`, date: new Date(Date.now() + (i + 1) * 86_400_000).toISOString(),
+      opponent: i % 2 ? "Scheduled opponent" : "League matchup", opponentAbbreviation: "NBA", opponentLogo: "", homeAway: (i % 2 ? "away" : "home") as "home" | "away", status: "pre", detail: "Scheduled" })),
+  };
+}
+
+/** Team page data — ESPN live with a curated fallback when the public endpoint is unavailable. */
+export function useTeamDetail(abbr: string) {
+  const teamId = ESPN_TEAM_IDS[abbr.toUpperCase()] ?? abbr;
+  const query = trpc.nba.teamDetail.useQuery({ teamId }, { staleTime: 300_000, refetchInterval: 300_000, retry: 1 });
+  const data = useMemo(() => query.data ?? fallbackTeamDetail(abbr.toUpperCase()), [query.data, abbr]);
+  return { data, isLive: Boolean(query.data), isLoading: query.isLoading, error: query.error };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

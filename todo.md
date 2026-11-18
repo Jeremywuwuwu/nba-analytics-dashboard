@@ -46,6 +46,14 @@
 - [x] Efficiency scatter plot
 - [x] Multi-team stat comparison table
 
+## Team Detail Page
+- [x] Team detail pages (/teams/:abbr)
+- [x] Full roster view with active/inactive status
+- [x] Team shooting chart with ESPN shooting splits
+- [x] Next 5 scheduled games
+- [x] Team links wired throughout dashboard, standings, and players views
+- [x] ESPN-backed team data with curated fallback
+
 ## API Integration
 - [x] ESPN Public API — scoreboard (live games, scores, status)
 - [x] ESPN Public API — standings (East + West with full stats)
@@ -60,9 +68,12 @@
 - [x] Vitest test suite passing
 - [x] Hot module replacement working
 
+## Delivery
+- [x] Run build and test verification after team pages
+- [ ] Save a final WebDev checkpoint
+- [ ] Push final dashboard to the existing GitHub repo `nba-analytics-dashboard`
+- [x] Document data sources, advanced metric formulas, fallback behavior, and refresh intervals
+
 ## Pending / Future
-- [x] Player comparison mode — multi-select on Players page with compare bar
-- [x] Player comparison page — overlaid radar charts + season trend lines
-- [ ] Team detail pages (/teams/:id)
 - [ ] Game detail / box score view
 - [ ] Historical season selector

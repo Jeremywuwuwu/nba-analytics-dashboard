@@ -12,6 +12,7 @@ import {
   getScoreboardByDate,
   getStandings,
   getTeams,
+  getTeamDetail,
 } from "./espnApi";
 
 export const nbaRouter = router({
@@ -68,4 +69,16 @@ export const nbaRouter = router({
       return [];
     }
   }),
+
+  /** Roster, shooting splits, and next five scheduled games for one team. */
+  teamDetail: publicProcedure
+    .input(z.object({ teamId: z.string().min(1) }))
+    .query(async ({ input }) => {
+      try {
+        return await getTeamDetail(input.teamId);
+      } catch (err) {
+        console.error("[NBA] getTeamDetail error:", err);
+        return null;
+      }
+    }),
 });

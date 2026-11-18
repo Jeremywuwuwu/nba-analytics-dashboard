@@ -398,9 +398,11 @@ export default function Dashboard() {
                       className="w-2 h-2 rounded-full flex-shrink-0"
                       style={{ background: team.color }}
                     />
-                    <span className={cn("text-xs font-semibold truncate", i === 0 ? "text-white" : "text-white/70")}>
-                      {team.abbr}
-                    </span>
+                    <Link href={`/teams/${team.abbr}`}>
+                      <span className={cn("text-xs font-semibold truncate hover:text-blue-300 transition-colors", i === 0 ? "text-white" : "text-white/70")}>
+                        {team.abbr}
+                      </span>
+                    </Link>
                   </div>
                   <span className="col-span-2 text-center text-xs font-bold text-emerald-400" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
                     {team.wins}
